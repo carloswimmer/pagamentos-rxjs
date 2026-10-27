@@ -9,7 +9,7 @@ import { rxResource } from '@angular/core/rxjs-interop';
   styleUrl: './folha-pagamentos.css',
 })
 export class FolhaPagamentos {
-  private readonly _pagamentosApi = inject(PagamentosApi)
+  private readonly _pagamentosApi = inject(PagamentosApi);
 
   // funcionarios = signal<IFuncionario[]>([]);
 
@@ -17,44 +17,34 @@ export class FolhaPagamentos {
   processando = signal(false);
 
   funcionariosResource = rxResource({
-    stream: () => this._pagamentosApi.getFuncionarios()
-  })
+    stream: () => this._pagamentosApi.getFuncionarios(),
+  });
 
   funcionarios = computed(() => {
     if (this.funcionariosResource.hasValue()) {
-      return this.funcionariosResource.value()
+      return this.funcionariosResource.value();
     }
 
-    return []
-  })
-
-  funcionariosSelecionados = computed(() => {
-    const resource = this.funcionariosResource
-
-    if (resource.hasValue()) {
-      return resource.value()?.filter(funcionario => funcionario.selecionado)
-    }
-
-    return []
+    return [];
   });
 
-  toggleSelecao(id: number) {
+  funcionariosSelecionados = computed(() => {
+    const resource = this.funcionariosResource;
 
-  }
+    if (resource.hasValue()) {
+      return resource.value()?.filter((funcionario) => funcionario.selecionado);
+    }
 
-  iniciarPagamentos() {
+    return [];
+  });
 
-  }
+  toggleSelecao(id: number) {}
 
-  private atualizarStatus(id: number, novoStatus: IFuncionario['status']) {
+  iniciarPagamentos() {}
 
-  }
+  private atualizarStatus(id: number, novoStatus: IFuncionario['status']) {}
 
-  private addLog(msg: string) {
+  private addLog(msg: string) {}
 
-  }
-
-  private resetarStatus() {
-
-  }
+  private resetarStatus() {}
 }

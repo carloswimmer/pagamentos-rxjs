@@ -15,6 +15,9 @@ module.exports = defineConfig([
     ],
     processor: angular.processInlineTemplates,
     rules: {
+      'no-trailing-spaces': 'error',
+      'padded-blocks': ['error', 'never'],
+      'eol-last': ['error', 'always'],
       '@angular-eslint/directive-selector': [
         'error',
         {
