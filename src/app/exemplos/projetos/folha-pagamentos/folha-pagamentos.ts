@@ -13,14 +13,11 @@ export class FolhaPagamentos {
 
   ngOnInit() {
     this._pagamentosApi.getFuncionarios().pipe(
-      map(funcionarios => funcionarios[0]),
-      filter(funcionario => funcionario !== undefined),
-      switchMap(funcionario => this._pagamentosApi.pagarFuncionario(funcionario)),
-    )
-      .subscribe({
-        next: (response) => console.log(response.mensagem, response.funcionario.nome),
-        error: (err: IPagamentoResponse) => console.error(err.mensagem, err.funcionario.nome)
-      });
+      switchMap(funcionarios => from(funcionarios)),
+      concatMap(funcionario => this._pagamentosApi.pagarFuncionario(funcionario).pipe(
+        catchError((error: IPagamentoResponse) => of(error))
+      ))
+    ).subscribe(response => console.log(response.funcionario.nome, ': ', response.mensagem))
   }
 
   funcionarios = signal<IFuncionario[]>([]);
