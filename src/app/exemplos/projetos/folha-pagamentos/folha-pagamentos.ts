@@ -1,6 +1,6 @@
 import { Component, computed, inject, signal } from '@angular/core';
-import { from, tap, concatMap, map, catchError, of, defaultIfEmpty, endWith, finalize, delay, mergeMap, filter, switchMap } from 'rxjs';
-import { IFuncionario, IPagamentoResponse, PagamentosApi } from './pagamentos-api';
+import { IFuncionario, PagamentosApi } from './pagamentos-api';
+import { rxResource } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-folha-pagamentos',
@@ -11,23 +11,32 @@ import { IFuncionario, IPagamentoResponse, PagamentosApi } from './pagamentos-ap
 export class FolhaPagamentos {
   private readonly _pagamentosApi = inject(PagamentosApi)
 
-  ngOnInit() {
-    this._pagamentosApi.getFuncionarios().pipe(
-      switchMap(funcionarios => from(funcionarios)),
-      concatMap(funcionario => this._pagamentosApi.pagarFuncionario(funcionario).pipe(
-        catchError((error: IPagamentoResponse) => of(error))
-      ))
-    ).subscribe(response => console.log(response.funcionario.nome, ': ', response.mensagem))
-  }
-
-  funcionarios = signal<IFuncionario[]>([]);
+  // funcionarios = signal<IFuncionario[]>([]);
 
   consoleLogs = signal<string[]>(['Sistema pronto para iniciar.']);
   processando = signal(false);
 
-  funcionariosSelecionados = computed(() =>
-    this.funcionarios().filter(f => f.selecionado)
-  );
+  funcionariosResource = rxResource({
+    stream: () => this._pagamentosApi.getFuncionarios()
+  })
+
+  funcionarios = computed(() => {
+    if (this.funcionariosResource.hasValue()) {
+      return this.funcionariosResource.value()
+    }
+
+    return []
+  })
+
+  funcionariosSelecionados = computed(() => {
+    const resource = this.funcionariosResource
+
+    if (resource.hasValue()) {
+      return resource.value()?.filter(funcionario => funcionario.selecionado)
+    }
+
+    return []
+  });
 
   toggleSelecao(id: number) {
 

@@ -42,7 +42,7 @@ export class PagamentosApi {
             map((funcionarios) => funcionarios.map(
                 funcionario => ({
                     ...funcionario,
-                    selecionado: false,
+                    selecionado: true,
                     status: 'pendente'
                 }))
             ));
