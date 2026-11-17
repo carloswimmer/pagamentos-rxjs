@@ -21,8 +21,10 @@ export class FolhaPagamentos {
   });
 
   funcionarios = computed(() => {
-    if (this.funcionariosResource.hasValue()) {
-      return this.funcionariosResource.value();
+    const resource = this.funcionariosResource;
+
+    if (resource.hasValue()) {
+      return resource.value();
     }
 
     return [];
@@ -37,6 +39,20 @@ export class FolhaPagamentos {
 
     return [];
   });
+
+  funcionariosMensagemErro = computed(() => {
+    const erroFuncionarios = this.funcionariosResource.error();
+
+    if (erroFuncionarios?.cause) {
+      return erroFuncionarios.cause;
+    }
+
+    return 'Ocorreu um erro inesperado.';
+  });
+
+  recarregarFuncionarios() {
+    this.funcionariosResource.reload();
+  }
 
   toggleSelecao(id: number) {}
 
